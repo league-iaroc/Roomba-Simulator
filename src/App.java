@@ -13,10 +13,10 @@ import processing.core.PApplet;
 
 public class App extends PApplet {
 	// A reference to our box2d world
-	public final int GRID_SIZE = 8;
-	public final int SCREEN_SIZE = 1000;
-	public final int WALL_WIDTH = SCREEN_SIZE/GRID_SIZE;
-	int tubeW = 10;// tubeL/8;
+	public static  final int GRID_SIZE = 8;
+	public static final int SCREEN_SIZE = 1000;
+	public static final int PIPE_LENGTH = SCREEN_SIZE/GRID_SIZE;
+	public static final int PIPE_WIDTH = 10;
 
 
 	public Box2DProcessing box2d;
@@ -64,16 +64,16 @@ public class App extends PApplet {
 	}
 
 	void setMaze() {
-		int offset = WALL_WIDTH / 2;
+		int offset = PIPE_LENGTH / 2;
 		boolean bound;
 		for (int i = 0; i < GRID_SIZE + 1; i++) {
 			for (int j = 0; j < GRID_SIZE + 1; j++) {
 				bound = j == 0 || j == GRID_SIZE;
-				walls.add(new Wall(WALL_WIDTH * i + offset, WALL_WIDTH * j,
-						WALL_WIDTH, tubeW, bound, this));
+				walls.add(new Wall(PIPE_LENGTH * i + offset, PIPE_LENGTH * j,
+						PIPE_LENGTH, PIPE_WIDTH, bound, this));
 				bound = i == 0 || i == GRID_SIZE;
-				walls.add(new Wall(WALL_WIDTH * i, WALL_WIDTH * j + offset,
-						tubeW, WALL_WIDTH, bound, this));
+				walls.add(new Wall(PIPE_LENGTH * i, PIPE_LENGTH * j + offset,
+						PIPE_WIDTH, PIPE_LENGTH, bound, this));
 				// cells.add(Cell(offset*(i+1), offset*(j+1)));
 			}
 		}
@@ -100,8 +100,8 @@ public class App extends PApplet {
 		if (red <= 0 || red >= 255) {
 			increment = -increment;
 		}
-		ellipse(width - WALL_WIDTH / 2, WALL_WIDTH / 2, WALL_WIDTH / 2,
-				WALL_WIDTH / 2);
+		ellipse(width - PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 2,
+				PIPE_LENGTH / 2);
 	}
 
 	public void beginContact(Contact cp) {
