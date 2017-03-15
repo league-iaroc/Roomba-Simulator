@@ -25,7 +25,7 @@ public class Brain extends Head {
 			System.out.println(roomba.getAngle());
 			sleep(500);
 		} else {
-			driveDirect(500, 0);
+			driveDirect(100, 500);
 		}
 
 	}

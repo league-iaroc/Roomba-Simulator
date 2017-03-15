@@ -13,9 +13,11 @@ import processing.core.PApplet;
 
 public class App extends PApplet {
 	// A reference to our box2d world
-	public final int GRID_SIZE = 2;
-	public final int SCREEN_SIZE = 300;
+	public final int GRID_SIZE = 8;
+	public final int SCREEN_SIZE = 1000;
 	public final int WALL_WIDTH = SCREEN_SIZE/GRID_SIZE;
+	int tubeW = 10;// tubeL/8;
+
 
 	public Box2DProcessing box2d;
 	ArrayList<Cell> cells;
@@ -63,7 +65,6 @@ public class App extends PApplet {
 
 	void setMaze() {
 		int offset = WALL_WIDTH / 2;
-		int tubeW = 1;// tubeL/8;
 		boolean bound;
 		for (int i = 0; i < GRID_SIZE + 1; i++) {
 			for (int j = 0; j < GRID_SIZE + 1; j++) {
