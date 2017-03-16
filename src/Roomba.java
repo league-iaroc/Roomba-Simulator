@@ -7,14 +7,7 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import shiffman.box2d.Box2DProcessing;
 
-// The Nature of Code
-// Daniel Shiffman
-// http://natureofcode.com
-
-// A circular particle
-
 public class Roomba {
-	// We need to keep track of a Body and a radius
 	Body body;
 	float radius;
 	float angle = 0;
@@ -28,22 +21,15 @@ public class Roomba {
 	Roomba(float x, float y, float r_, Box2DProcessing box2d) {
 		radius = r_;
 		this.box2d = box2d;
-		// This function puts the particle in the Box2d world
 		makeBody(x, y, radius);
 		body.setUserData(this);
-		// col = g.color(127);
 		sizeConstant = radius / 20;
 	}
 
-	// This function removes the particle from the box2d world
 	void killBody() {
 		box2d.destroyBody(body);
 	}
 
-	// Change color when hit
-	void change() {
-		// col = color(130, 0, 0);
-	}
 
 	// Is the particle ready for deletion?
 	boolean done() {
