@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Head {
+public abstract class Head {
 	Roomba roomba;
 	float left = 0;
 	float right = 0;
@@ -17,6 +17,11 @@ public class Head {
 		initialize();
 		current = commands.get(0);
 	}
+
+	public abstract void initialize();
+
+	public abstract void loop();
+
 	void go() {
 		roomba.driveDirect(current.getLeft(), current.getRight());
 		if (!(current.isSleeping()) && commands.size() > 0) {
@@ -39,9 +44,6 @@ public class Head {
 		s.setSleep(mils);
 	}
 
-	void loop() {
-	}
-
 	int getMilliseconds() {
 		driveDirect(left, right);
 		milliseconds--;
@@ -56,14 +58,13 @@ public class Head {
 	boolean isBumpedLeft() {
 		return leftBump;
 	}
+
 	boolean isBumpedRight() {
 		return rightBump;
 	}
+
 	void readSensors(int num) {
 
-	}
-
-	void initialize() {
 	}
 
 }

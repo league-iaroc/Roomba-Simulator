@@ -5,6 +5,8 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
+import shiffman.box2d.Box2DProcessing;
+
 // The Nature of Code
 // Daniel Shiffman
 // http://natureofcode.com
@@ -14,48 +16,48 @@ import org.jbox2d.dynamics.FixtureDef;
 public class Roomba {
 	// We need to keep track of a Body and a radius
 	Body body;
-	float r;
+	float radius;
 	float angle = 0;
 	int tick = 0;
 	int col = 0;
 	int light = 50;
 	int incRed = -4;
 	float sizeConstant;
-	App app;
+	Box2DProcessing box2d;
 
-	Roomba(float x, float y, float r_, App app) {
-		r = r_;
-		this.app = app;
+	Roomba(float x, float y, float r_, Box2DProcessing box2d) {
+		radius = r_;
+		this.box2d = box2d;
 		// This function puts the particle in the Box2d world
-		makeBody(x, y, r);
+		makeBody(x, y, radius);
 		body.setUserData(this);
-		// col = app.color(127);
-		sizeConstant = r / 20;
+		// col = g.color(127);
+		sizeConstant = radius / 20;
 	}
 
 	// This function removes the particle from the box2d world
 	void killBody() {
-		app.box2d.destroyBody(body);
+		box2d.destroyBody(body);
 	}
 
 	// Change color when hit
 	void change() {
-		col = app.color(130, 0, 0);
+		// col = color(130, 0, 0);
 	}
 
 	// Is the particle ready for deletion?
 	boolean done() {
 		// Let's find the screen position of the particle
-		Vec2 pos = app.box2d.getBodyPixelCoord(body);
+		Vec2 pos = box2d.getBodyPixelCoord(body);
 		// Is it off the bottom of the screen?
-		if (pos.y > app.height + r * 2) {
+		if (pos.y > Pgraphics.SCREEN_SIZE + radius * 2) {
 			killBody();
 			return true;
 		}
 		return false;
 	}
+
 	void driveDirect(float left, float right) {
-		// possibly use a ques to hold sleep task
 		if (tick == 1) {
 			float speed = (left + right) / 100;
 			float ang = (left - right) / 200;
@@ -65,13 +67,13 @@ public class Roomba {
 
 	float getAngle() {
 		float temp = angle;
-		angle = body.getAngle() * (180 / app.PI);
+		angle = (float) (body.getAngle() * (180 / Math.PI));
 		return angle - temp;
 	}
 
 	void drive(float speed, float ang) {
-		float y = app.cos(body.getAngle()) * speed;
-		float x = app.sin(body.getAngle()) * speed;
+		float y = (float) (Math.cos(body.getAngle()) * speed);
+		float x = (float) (Math.sin(body.getAngle()) * speed);
 
 		body.setLinearVelocity(new Vec2(x, y));
 		body.setAngularVelocity(ang);
@@ -86,7 +88,7 @@ public class Roomba {
 	}
 
 	//
-	void display() {
+	void display(Pgraphics g) {
 		tick++;
 		if (tick > 10) {
 			body.setLinearVelocity(new Vec2(0, 0));
@@ -95,38 +97,38 @@ public class Roomba {
 		}
 
 		// We look at each body and get its screen position
-		Vec2 pos = app.box2d.getBodyPixelCoord(body);
+		Vec2 pos = g.box2d.getBodyPixelCoord(body);
 		// Get its angle of rotation
 		float a = body.getAngle();
-		app.pushMatrix();
-		app.translate(pos.x, pos.y);
-		app.rotate(a);
-		app.fill(col);
-		app.stroke(0);
-		app.strokeWeight(2);
-		app.ellipse(0, 0, r * 2, r * 2);
-		app.fill(100);
-		app.arc(0, 0, r * 2, r * 2, 0, 2 * app.PI);
-		app.fill(col);
-		app.arc(0f, 0f, r * 2.15f, r * 2.15f, app.PI * 1.0f, 2.0f * app.PI);
-		app.fill(169, 217, 109);
-		app.arc(0f, 0f, r * 1.75f, r * 1.75f, 0f, 2f * app.PI);
-		app.fill(255, 255, 184);
-		app.arc(0, 0, r, r, 0, 2 * app.PI);
-		app.fill(20);
-		app.arc(0, 0, r * .74f, r * .75f, 0, 2 * app.PI);
-		app.fill(230, 242, 244);
-		app.arc(0, 0, r / 2, r / 2, 0, 2 * app.PI);
-		app.fill(100);
-		app.arc(0, 0 + r * .875f, r / 3, r / 3, 0, 2 * app.PI);
-		app.fill(100);
-		app.arc(0, 0 + r * .875f, r / 4, r / 4, 0, 2 * app.PI);
-		app.fill(100);
-		app.arc(0, 0 - r, r / 4f, r / 4, 0, 2 * app.PI);
-		app.fill(255, redDot(), light);
-		app.noStroke();
-		app.ellipse(1, 1, 3, 3);
-		app.popMatrix();
+		g.pushMatrix();
+		g.translate(pos.x, pos.y);
+		g.rotate(a);
+		g.fill(col);
+		g.stroke(0);
+		g.strokeWeight(2);
+		g.ellipse(0, 0, radius * 2, radius * 2);
+		g.fill(100);
+		g.arc(0, 0, radius * 2, radius * 2, 0, 2 * g.PI);
+		g.fill(col);
+		g.arc(0f, 0f, radius * 2.15f, radius * 2.15f, g.PI * 1.0f, 2.0f * g.PI);
+		g.fill(169, 217, 109);
+		g.arc(0f, 0f, radius * 1.75f, radius * 1.75f, 0f, 2f * g.PI);
+		g.fill(255, 255, 184);
+		g.arc(0, 0, radius, radius, 0, 2 * g.PI);
+		g.fill(20);
+		g.arc(0, 0, radius * .74f, radius * .75f, 0, 2 * g.PI);
+		g.fill(230, 242, 244);
+		g.arc(0, 0, radius / 2, radius / 2, 0, 2 * g.PI);
+		g.fill(100);
+		g.arc(0, 0 + radius * .875f, radius / 3, radius / 3, 0, 2 * g.PI);
+		g.fill(100);
+		g.arc(0, 0 + radius * .875f, radius / 4, radius / 4, 0, 2 * g.PI);
+		g.fill(100);
+		g.arc(0, 0 - radius, radius / 4f, radius / 4, 0, 2 * g.PI);
+		g.fill(255, redDot(), light);
+		g.noStroke();
+		g.ellipse(1, 1, 3, 3);
+		g.popMatrix();
 	}
 
 	// Here's our function that adds the particle to the Box2D world
@@ -134,12 +136,12 @@ public class Roomba {
 		// Define a body
 		BodyDef bd = new BodyDef();
 		// Set its position
-		bd.position = app.box2d.coordPixelsToWorld(x, y);
+		bd.position = box2d.coordPixelsToWorld(x, y);
 		bd.type = BodyType.DYNAMIC;
-		body = app.box2d.createBody(bd);
+		body = box2d.createBody(bd);
 		// Make the body's shape a circle
 		CircleShape cs = new CircleShape();
-		cs.m_radius = app.box2d.scalarPixelsToWorld(r);
+		cs.m_radius = box2d.scalarPixelsToWorld(r);
 		FixtureDef fd = new FixtureDef();
 		fd.shape = cs;
 		// Parameters that affect physics
