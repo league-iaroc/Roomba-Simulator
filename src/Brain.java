@@ -2,23 +2,23 @@ import processing.core.PApplet;
 
 public class Brain extends Head {
 	Roomba roomba;
+
 	public static void main(String[] args) {
-		PApplet.main("App");
+		PApplet.main("Pgraphics");
 	}
-	
-	
+
 	public Brain(Roomba roomba) {
 		super(roomba);
 		this.roomba = roomba;
 	}
 
-	void initialize() {
+	public void initialize() {
 		driveDirect(-500, -500);
 		sleep(1000);
 
 	}
 
-	void loop() {
+	public void loop() {
 		readSensors(0);
 		if (isBumpedRight()) {
 			driveDirect(-500, -100);

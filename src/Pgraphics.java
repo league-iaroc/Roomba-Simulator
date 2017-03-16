@@ -11,16 +11,16 @@ import org.jbox2d.dynamics.contacts.*;
 
 import processing.core.PApplet;
 
-public class App extends PApplet {
+public class Pgraphics extends PApplet {
 	// A reference to our box2d world
-	public static  final int GRID_SIZE = 8;
-	public static final int SCREEN_SIZE = 1000;
+	public static  final int GRID_SIZE =8;
+	public static final int SCREEN_SIZE =1000;
 	public static final int PIPE_LENGTH = SCREEN_SIZE/GRID_SIZE;
 	public static final int PIPE_WIDTH = 10;
 
 
 	public Box2DProcessing box2d;
-	ArrayList<Cell> cells;
+	//ArrayList<Cell> cells;
 	ArrayList<Wall> walls;
 
 	private Brain brain;
@@ -42,7 +42,7 @@ public class App extends PApplet {
 		box2d.setGravity(0, 0);
 		box2d.listenForCollisions();
 		walls = new ArrayList<Wall>();
-		roomba = new Roomba(20, 50, width / (GRID_SIZE * 6), this);
+		roomba = new Roomba(20, 50, PIPE_LENGTH/6, box2d);
 		brain = new Brain(roomba);
 		setMaze();
 	}
@@ -51,10 +51,11 @@ public class App extends PApplet {
 		background(255);
 		// use this step method to sleep?
 		box2d.step();
-		roomba.display();
+		roomba.display(this);
 		if (start != true) {
 			if (mousePressed) {
 				start = true;
+				System.out.println("hel");
 			}
 		} else {
 			brain.go();
@@ -70,10 +71,10 @@ public class App extends PApplet {
 			for (int j = 0; j < GRID_SIZE + 1; j++) {
 				bound = j == 0 || j == GRID_SIZE;
 				walls.add(new Wall(PIPE_LENGTH * i + offset, PIPE_LENGTH * j,
-						PIPE_LENGTH, PIPE_WIDTH, bound, this));
+						PIPE_LENGTH, PIPE_WIDTH, bound, box2d));
 				bound = i == 0 || i == GRID_SIZE;
 				walls.add(new Wall(PIPE_LENGTH * i, PIPE_LENGTH * j + offset,
-						PIPE_WIDTH, PIPE_LENGTH, bound, this));
+						PIPE_WIDTH, PIPE_LENGTH, bound, box2d));
 				// cells.add(Cell(offset*(i+1), offset*(j+1)));
 			}
 		}
@@ -82,9 +83,9 @@ public class App extends PApplet {
 	void drawMaze() {
 		for (int i = walls.size() - 1; i >= 0; i--) {
 			Wall p = walls.get(i);
-			p.display();
+			p.display(this);
 			if (start != true) {
-				if (p.done()) {
+				if (p.done(this)) {
 					walls.remove(i);
 				}
 			}
