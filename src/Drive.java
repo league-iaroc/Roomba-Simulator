@@ -1,14 +1,23 @@
 public class Drive {
-	float left;
-	float right;
+	private float left;
+	private float right;
 
 	int mil = 0;
 	boolean sleep = false;
 	long start = -1;
 
 	public Drive(float left, float right) {
-		this.left = left;
-		this.right = right;
+		if (left > 0) {
+			this.left = Math.min(left, 1000);
+		} else {
+			this.left = Math.max(left, 1000);
+		}
+		if (right > 0) {
+			this.right = Math.min(right, 1000);
+		} else {
+			this.right = Math.max(right, 1000);
+		}
+		
 	}
 
 	public float getLeft() {

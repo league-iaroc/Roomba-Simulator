@@ -7,7 +7,7 @@ public class EndZone {
 	int r;
 
 	public EndZone(int x, int y, int r) {
-
+		
 		this.x = x;
 		this.y = y;
 		this.r = r;

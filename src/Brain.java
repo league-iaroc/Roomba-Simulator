@@ -12,7 +12,7 @@ public class Brain extends Head {
 	}
 
 	public void initialize() {
-		driveDirect(100,100);
+		driveDirect(1000,1000);
 
 	}
 
