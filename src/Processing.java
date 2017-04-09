@@ -11,12 +11,14 @@ import org.jbox2d.dynamics.contacts.*;
 
 import processing.core.PApplet;
 
-public class Pgraphics extends PApplet {
+public class Processing extends PApplet {
 	// A reference to our box2d world
-	public static final int GRID_SIZE = 8;
-	public static final int SCREEN_SIZE = 1000;
+	public static int GRID_SIZE = 4;
+	public static boolean START = false;
+
+	public static final int SCREEN_SIZE = 800;
 	public static final int PIPE_LENGTH = SCREEN_SIZE / GRID_SIZE;
-	public static final int PIPE_WIDTH = 10;
+	public static final int PIPE_WIDTH = 4;
 
 	public Box2DProcessing box2d;
 	// ArrayList<Cell> cells;
@@ -25,10 +27,7 @@ public class Pgraphics extends PApplet {
 	private Brain brain;
 	private Wall wall;
 	private Roomba roomba;
-
-	private int red = 100;
-	private int increment = 2;
-	boolean start = false;
+	private EndZone zone = new EndZone();
 
 	public void settings() {
 		size(SCREEN_SIZE, SCREEN_SIZE);
@@ -42,7 +41,7 @@ public class Pgraphics extends PApplet {
 		box2d.setGravity(0, 0);
 		box2d.listenForCollisions();
 		walls = new ArrayList<Wall>();
-		roomba = new Roomba(20, 50, PIPE_LENGTH / 6, box2d);
+		roomba = new Roomba(100, 100, PIPE_LENGTH / 6, box2d);
 		brain = new Brain(roomba);
 		setMaze();
 	}
@@ -52,16 +51,16 @@ public class Pgraphics extends PApplet {
 		// use this step method to sleep?
 		box2d.step();
 		roomba.display(this);
-		if (start != true) {
+		if (START != true) {
 			if (mousePressed) {
-				start = true;
-				System.out.println("hel");
+				START = true;
 			}
 		} else {
 			brain.go();
 		}
+		zone.display(this);
 		drawMaze();
-		drawFinish();
+
 	}
 
 	void setMaze() {
@@ -70,9 +69,13 @@ public class Pgraphics extends PApplet {
 		for (int i = 0; i < GRID_SIZE + 1; i++) {
 			for (int j = 0; j < GRID_SIZE + 1; j++) {
 				bound = j == 0 || j == GRID_SIZE;
-				walls.add(new Wall(PIPE_LENGTH * i + offset, PIPE_LENGTH * j, PIPE_LENGTH, PIPE_WIDTH, bound, box2d));
+				if (!((j == 3 && i == 2) || (j == 2 && i == 2) || (j == 1 && i == 3) || (j == 1 && i == 0)))
+					walls.add(
+							new Wall(PIPE_LENGTH * i + offset, PIPE_LENGTH * j, PIPE_LENGTH, PIPE_WIDTH, bound, box2d));
 				bound = i == 0 || i == GRID_SIZE;
-				walls.add(new Wall(PIPE_LENGTH * i, PIPE_LENGTH * j + offset, PIPE_WIDTH, PIPE_LENGTH, bound, box2d));
+				if (!((j == 1 && i == 2) || (j == 1 && i == 3) || (j == 1 && i == 2) || (j == 1 && i == 1)))
+					walls.add(
+							new Wall(PIPE_LENGTH * i, PIPE_LENGTH * j + offset, PIPE_WIDTH, PIPE_LENGTH, bound, box2d));
 				// cells.add(Cell(offset*(i+1), offset*(j+1)));
 			}
 		}
@@ -82,24 +85,12 @@ public class Pgraphics extends PApplet {
 		for (int i = walls.size() - 1; i >= 0; i--) {
 			Wall p = walls.get(i);
 			p.display(this);
-			if (start != true) {
+			if (START != true) {
 				if (p.done(this)) {
-					walls.remove(i);
+					//walls.remove(i);
 				}
 			}
 		}
-	}
-
-	void drawFinish() {
-		if (start) {
-			red += increment;
-		}
-		fill(red, 255, red);
-		noStroke();
-		if (red <= 0 || red >= 255) {
-			increment = -increment;
-		}
-		ellipse(width - PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 2);
 	}
 
 	public void beginContact(Contact cp) {

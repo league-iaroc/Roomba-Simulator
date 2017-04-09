@@ -4,7 +4,7 @@ public class Brain extends Head {
 	Roomba roomba;
 
 	public static void main(String[] args) {
-		PApplet.main("Pgraphics");
+		PApplet.main("Processing");
 	}
 
 	public Brain(Roomba roomba) {

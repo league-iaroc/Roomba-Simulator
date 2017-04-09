@@ -34,6 +34,15 @@ public abstract class Head {
 		}
 	}
 
+	/**
+	 * This command lets you control the forward and backward motion of Roomba’s
+	 * drive wheels independently.  A positive velocity makes
+	 * that wheel drive forward, while a negative velocity makes it drive
+	 * backward.
+	 * 
+	 * @param Left wheel velocity
+	 * @param Right wheel velocity
+	 */
 	void driveDirect(float l, float r) {
 		Drive d = new Drive(l, r);
 		commands.add(d);

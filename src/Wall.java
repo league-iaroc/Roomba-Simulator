@@ -45,7 +45,7 @@ public class Wall {
 
 	// Draw the boundary, if it were at an angle we'd have to do something
 	// fancier
-	void display(Pgraphics g) {
+	void display(Processing g) {
 		g.fill(255);
 		g.stroke(0);
 		g.rectMode(g.CENTER);
@@ -56,7 +56,7 @@ public class Wall {
 		box2d.destroyBody(b);
 	}
 
-	boolean done(Pgraphics g) {
+	boolean done(Processing g) {
 		Vec2 pos = box2d.getBodyPixelCoord(b);
 		// Is it off the bottom of the screen?
 		if (!bound && pos.y >= g.mouseY - 20 && pos.x >= g.mouseX - 20 && pos.y <= g.mouseY + 20

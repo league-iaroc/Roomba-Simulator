@@ -36,7 +36,7 @@ public class Roomba {
 		// Let's find the screen position of the particle
 		Vec2 pos = box2d.getBodyPixelCoord(body);
 		// Is it off the bottom of the screen?
-		if (pos.y > Pgraphics.SCREEN_SIZE + radius * 2) {
+		if (pos.y > Processing.SCREEN_SIZE + radius * 2) {
 			killBody();
 			return true;
 		}
@@ -74,7 +74,7 @@ public class Roomba {
 	}
 
 	//
-	void display(Pgraphics g) {
+	void display(Processing g) {
 		tick++;
 		if (tick > 10) {
 			body.setLinearVelocity(new Vec2(0, 0));
