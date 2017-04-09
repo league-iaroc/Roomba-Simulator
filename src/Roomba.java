@@ -13,10 +13,8 @@ public class Roomba {
 	float radius;
 	float angle = 0;
 	int tick = 0;
-	int col = 0;
 	int light = 50;
 	int incRed = -4;
-	float sizeConstant;
 	float x;
 	float y;
 	float r;
@@ -27,7 +25,7 @@ public class Roomba {
 		this.box2d = box2d;
 		makeBody(x, y, radius);
 		body.setUserData(this);
-		sizeConstant = radius / 20;
+		body.setAngularVelocity(17.2f);
 	}
 
 	void killBody() {
@@ -45,8 +43,8 @@ public class Roomba {
 
 	void driveDirect(float left, float right) {
 		if (tick == 1) {
-			float speed = (left + right) / 100;
-			float ang = (left - right) / 200;
+			float speed = (left + right) / (Processing.SCREEN_SIZE/(Processing.GRID_SIZE*2.0f));
+			float ang = (left - right) / (Processing.SCREEN_SIZE/(float)(Processing.GRID_SIZE));
 			drive(speed, ang);
 		}
 	}
@@ -57,12 +55,12 @@ public class Roomba {
 		return angle - temp;
 	}
 
-	void drive(float speed, float ang) {
+	void drive(float speed, float angle) {
 		float y = (float) (Math.cos(body.getAngle()) * speed);
 		float x = (float) (Math.sin(body.getAngle()) * speed);
 
 		body.setLinearVelocity(new Vec2(x, y));
-		body.setAngularVelocity(ang);
+		body.setAngularVelocity(angle);
 
 	}
 
@@ -89,13 +87,13 @@ public class Roomba {
 		g.pushMatrix();
 		g.translate(pos.x, pos.y);
 		g.rotate(a);
-		g.fill(col);
+		g.fill(0);
 		g.stroke(0);
 		g.strokeWeight(2);
 		g.ellipse(0, 0, radius * 2, radius * 2);
 		g.fill(100);
 		g.arc(0, 0, radius * 2, radius * 2, 0, 2 * g.PI);
-		g.fill(col);
+		g.fill(0);
 		g.arc(0f, 0f, radius * 2.15f, radius * 2.15f, g.PI * 1.0f, 2.0f * g.PI);
 		g.fill(169, 217, 109);
 		g.arc(0f, 0f, radius * 1.75f, radius * 1.75f, 0f, 2f * g.PI);

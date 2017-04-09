@@ -12,7 +12,6 @@ public class Wall {
 	float width;
 	float height;
 	boolean bound;
-	// Box 2d body
 	Body b;
 	private Box2DProcessing box2d;
 

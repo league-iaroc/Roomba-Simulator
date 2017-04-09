@@ -2,23 +2,18 @@ import java.util.ArrayList;
 
 import shiffman.box2d.*;
 
-import org.jbox2d.common.*;
-import org.jbox2d.dynamics.joints.*;
-import org.jbox2d.collision.shapes.*;
-import org.jbox2d.common.*;
-import org.jbox2d.dynamics.*;
+
 import org.jbox2d.dynamics.contacts.*;
 
 import processing.core.PApplet;
 
 public class Processing extends PApplet {
 	// A reference to our box2d world
-	public static int GRID_SIZE = 4;
+	public static int GRID_SIZE =4;
 	public static boolean START = false;
-
-	public static final int SCREEN_SIZE = 800;
-	public static final int PIPE_LENGTH = SCREEN_SIZE / GRID_SIZE;
-	public static final int PIPE_WIDTH = 4;
+	public static final int SCREEN_SIZE = 900;
+	public static int PIPE_LENGTH = SCREEN_SIZE / GRID_SIZE;
+	public static int PIPE_WIDTH = 4;
 
 	public Box2DProcessing box2d;
 	// ArrayList<Cell> cells;
@@ -41,7 +36,7 @@ public class Processing extends PApplet {
 		box2d.setGravity(0, 0);
 		box2d.listenForCollisions();
 		walls = new ArrayList<Wall>();
-		roomba = new Roomba(100, 100, PIPE_LENGTH / 6, box2d);
+		roomba = new Roomba(PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 6, box2d);
 		brain = new Brain(roomba);
 		setMaze();
 	}
@@ -95,6 +90,7 @@ public class Processing extends PApplet {
 
 	public void beginContact(Contact cp) {
 		brain.setBump(true);
+
 	}
 
 	public void endContact(Contact cp) {

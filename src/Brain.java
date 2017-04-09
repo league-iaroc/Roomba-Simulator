@@ -12,12 +12,13 @@ public class Brain extends Head {
 	}
 
 	public void initialize() {
-		driveDirect(-100000,-100000);
-
+		driveDirect(500,500);
 	}
 
 	public void loop() {
-		
+		driveDirect(800,1000);
+		if(isBumpedLeft()&& isBumpedRight()){
+	
 	}
-
+	}
 }
