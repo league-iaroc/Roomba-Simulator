@@ -10,12 +10,12 @@ public class Drive {
 		if (left > 0) {
 			this.left = Math.min(left, 1000);
 		} else {
-			this.left = Math.max(left, 1000);
+			this.left = Math.max(left, -1000);
 		}
 		if (right > 0) {
 			this.right = Math.min(right, 1000);
 		} else {
-			this.right = Math.max(right, 1000);
+			this.right = Math.max(right, -1000);
 		}
 		
 	}
