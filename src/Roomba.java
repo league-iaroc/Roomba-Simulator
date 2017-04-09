@@ -5,6 +5,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
+import processing.core.PConstants;
 import shiffman.box2d.Box2DProcessing;
 
 public class Roomba {
@@ -16,10 +17,13 @@ public class Roomba {
 	int light = 50;
 	int incRed = -4;
 	float sizeConstant;
+	float x;
+	float y;
+	float r;
 	Box2DProcessing box2d;
 
-	Roomba(float x, float y, float r_, Box2DProcessing box2d) {
-		radius = r_;
+	Roomba(float x, float y, float radius, Box2DProcessing box2d) {
+		this.radius = radius;
 		this.box2d = box2d;
 		makeBody(x, y, radius);
 		body.setUserData(this);
@@ -30,12 +34,8 @@ public class Roomba {
 		box2d.destroyBody(body);
 	}
 
-
-	// Is the particle ready for deletion?
 	boolean done() {
-		// Let's find the screen position of the particle
 		Vec2 pos = box2d.getBodyPixelCoord(body);
-		// Is it off the bottom of the screen?
 		if (pos.y > Processing.SCREEN_SIZE + radius * 2) {
 			killBody();
 			return true;
@@ -66,7 +66,7 @@ public class Roomba {
 
 	}
 
-	int redDot() {
+	int drawRedDot() {
 		light += incRed;
 		if (light <= 0 || light >= 255)
 			incRed = -incRed;
@@ -111,32 +111,25 @@ public class Roomba {
 		g.arc(0, 0 + radius * .875f, radius / 4, radius / 4, 0, 2 * g.PI);
 		g.fill(100);
 		g.arc(0, 0 - radius, radius / 4f, radius / 4, 0, 2 * g.PI);
-		g.fill(255, redDot(), light);
+		g.fill(255, drawRedDot(), light);
 		g.noStroke();
 		g.ellipse(1, 1, 3, 3);
 		g.popMatrix();
 	}
 
-	// Here's our function that adds the particle to the Box2D world
 	void makeBody(float x, float y, float r) {
-		// Define a body
 		BodyDef bd = new BodyDef();
-		// Set its position
 		bd.position = box2d.coordPixelsToWorld(x, y);
 		bd.type = BodyType.DYNAMIC;
 		body = box2d.createBody(bd);
-		// Make the body's shape a circle
 		CircleShape cs = new CircleShape();
 		cs.m_radius = box2d.scalarPixelsToWorld(r);
 		FixtureDef fd = new FixtureDef();
 		fd.shape = cs;
-		// Parameters that affect physics
 		fd.density = 1;
 		fd.friction = 0.5f;
 		fd.restitution = 0.1f;
-		// Attach fixture to body
 		body.createFixture(fd);
-		// body.setAngularVelocity(0);
 	}
 
 }

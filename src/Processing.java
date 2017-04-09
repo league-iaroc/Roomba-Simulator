@@ -27,7 +27,7 @@ public class Processing extends PApplet {
 	private Brain brain;
 	private Wall wall;
 	private Roomba roomba;
-	private EndZone zone = new EndZone();
+	private EndZone zone = new EndZone(SCREEN_SIZE - PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH /4 );
 
 	public void settings() {
 		size(SCREEN_SIZE, SCREEN_SIZE);

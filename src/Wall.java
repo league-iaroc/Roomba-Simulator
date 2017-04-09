@@ -23,23 +23,16 @@ public class Wall {
 		width = w_;
 		height = h_;
 		bound = bound_;
-		// Define the polygon
 		PolygonShape sd = new PolygonShape();
-		// Figure out the box2d coordinates
 		float box2dW = box2d.scalarPixelsToWorld(width / 2);
 		float box2dH = box2d.scalarPixelsToWorld(height / 2);
-		// We're just a box
 		sd.setAsBox(box2dW, box2dH);
 
-		// Create the body
 		BodyDef bd = new BodyDef();
 		bd.type = BodyType.STATIC;
 		bd.position.set(box2d.coordPixelsToWorld(x, y));
 		b = box2d.createBody(bd);
-
-		// Attached the shape to the body using a Fixture
 		b.createFixture(sd, 1);
-
 		b.setUserData(this);
 	}
 
@@ -58,7 +51,6 @@ public class Wall {
 
 	boolean done(Processing g) {
 		Vec2 pos = box2d.getBodyPixelCoord(b);
-		// Is it off the bottom of the screen?
 		if (!bound && pos.y >= g.mouseY - 20 && pos.x >= g.mouseX - 20 && pos.y <= g.mouseY + 20
 				&& pos.x <= g.mouseX + 20) {
 			killBody();

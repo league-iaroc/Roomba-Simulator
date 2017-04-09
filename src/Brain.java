@@ -9,11 +9,10 @@ public class Brain extends Head {
 
 	public Brain(Roomba roomba) {
 		super(roomba);
-		this.roomba = roomba;
 	}
 
 	public void initialize() {
-
+		driveDirect(100,100);
 
 	}
 
