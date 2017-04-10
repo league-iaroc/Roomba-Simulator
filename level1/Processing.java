@@ -1,7 +1,8 @@
+package level1;
+
 import java.util.ArrayList;
 
 import shiffman.box2d.*;
-
 
 import org.jbox2d.dynamics.contacts.*;
 
@@ -9,25 +10,35 @@ import processing.core.PApplet;
 
 public class Processing extends PApplet {
 	// A reference to our box2d world
-	public static int GRID_SIZE =4;
+	public static int GRID_SIZE = 4;
 	public static boolean START = false;
 	public static final int SCREEN_SIZE = 900;
 	public static int PIPE_LENGTH = SCREEN_SIZE / GRID_SIZE;
 	public static int PIPE_WIDTH = 4;
-
+	public static boolean END = false;
+	public static boolean WIN = false;
+	public ArrayList<Path> verticalPaths = new ArrayList<Path>();
+	public ArrayList<Path> horizontalPaths = new ArrayList<Path>();
 	public Box2DProcessing box2d;
-	// ArrayList<Cell> cells;
 	ArrayList<Wall> walls;
 
 	private Brain brain;
 	private Wall wall;
 	private Roomba roomba;
-	private EndZone zone = new EndZone(SCREEN_SIZE - PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH /4 );
+	private EndZone zone;
+
+	public Processing() {
+		verticalPaths.add(new Path(0, 1));
+		verticalPaths.add(new Path(3, 1));
+		horizontalPaths.add(new Path(2, 1));
+		horizontalPaths.add(new Path(3, 1));
+		horizontalPaths.add(new Path(2, 1));
+		horizontalPaths.add(new Path(1, 1));
+	}
 
 	public void settings() {
 		size(SCREEN_SIZE, SCREEN_SIZE);
 		box2d = new Box2DProcessing(this);
-
 	}
 
 	public void setup() {
@@ -37,6 +48,7 @@ public class Processing extends PApplet {
 		box2d.listenForCollisions();
 		walls = new ArrayList<Wall>();
 		roomba = new Roomba(PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 6, box2d);
+		zone = new EndZone(SCREEN_SIZE - PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 4, box2d);
 		brain = new Brain(roomba);
 		setMaze();
 	}
@@ -46,8 +58,18 @@ public class Processing extends PApplet {
 		// use this step method to sleep?
 		box2d.step();
 		roomba.display(this);
-		if (START != true) {
-			if (mousePressed) {
+		if (END) {
+			textSize(40);
+			if (WIN) {
+				text("You Win!", 400, 300);
+
+			} else {
+				text("You touched a wall!", 200, 200);
+			}
+		} else if (START != true) {
+			textSize(40);
+			text("Click to start!", 200, 300);
+			if (mousePressed && END != true) {
 				START = true;
 			}
 		} else {
@@ -64,14 +86,28 @@ public class Processing extends PApplet {
 		for (int i = 0; i < GRID_SIZE + 1; i++) {
 			for (int j = 0; j < GRID_SIZE + 1; j++) {
 				bound = j == 0 || j == GRID_SIZE;
-				if (!((j == 3 && i == 2) || (j == 2 && i == 2) || (j == 1 && i == 3) || (j == 1 && i == 0)))
+				boolean setVert = true;
+				boolean setHorz = true;
+				for (Path p : verticalPaths) {
+					if (p.row == i && p.col == j) {
+						setVert = false;
+					}
+				}
+				if (setVert) {
 					walls.add(
 							new Wall(PIPE_LENGTH * i + offset, PIPE_LENGTH * j, PIPE_LENGTH, PIPE_WIDTH, bound, box2d));
-				bound = i == 0 || i == GRID_SIZE;
-				if (!((j == 1 && i == 2) || (j == 1 && i == 3) || (j == 1 && i == 2) || (j == 1 && i == 1)))
+				}
+
+				for (Path p : horizontalPaths) {
+					if (p.row == i && p.col == j) {
+						setHorz = false;
+					}
+				}
+				if (setHorz) {
 					walls.add(
 							new Wall(PIPE_LENGTH * i, PIPE_LENGTH * j + offset, PIPE_WIDTH, PIPE_LENGTH, bound, box2d));
-				// cells.add(Cell(offset*(i+1), offset*(j+1)));
+					// cells.add(Cell(offset*(i+1), offset*(j+1)));
+				}
 			}
 		}
 	}
@@ -82,15 +118,23 @@ public class Processing extends PApplet {
 			p.display(this);
 			if (START != true) {
 				if (p.done(this)) {
-					//walls.remove(i);
+					// walls.remove(i);
 				}
 			}
 		}
 	}
 
 	public void beginContact(Contact cp) {
-		brain.setBump(true);
-
+		if (!(cp.getFixtureA().getBody() == zone.getBody()) && !(cp.getFixtureB().getBody() == (zone.getBody()))) {
+			brain.setBump(true);
+			fill(0);
+			END = true;
+			START = false;
+			roomba.killBody();
+		} else {
+			END = true;
+			WIN = true;
+		}
 	}
 
 	public void endContact(Contact cp) {

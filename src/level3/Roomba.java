@@ -1,3 +1,4 @@
+package level3;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -25,7 +26,7 @@ public class Roomba {
 		this.box2d = box2d;
 		makeBody(x, y, radius);
 		body.setUserData(this);
-		body.setAngularVelocity(17.2f);
+		body.setAngularVelocity(8.4f);
 	}
 
 	void killBody() {
@@ -70,6 +71,8 @@ public class Roomba {
 			incRed = -incRed;
 		return light;
 	}
+	
+
 
 	//
 	void display(Processing g) {
@@ -124,7 +127,7 @@ public class Roomba {
 		cs.m_radius = box2d.scalarPixelsToWorld(r);
 		FixtureDef fd = new FixtureDef();
 		fd.shape = cs;
-		fd.density = 1;
+		fd.density = 0;
 		fd.friction = 0.5f;
 		fd.restitution = 0.1f;
 		body.createFixture(fd);

@@ -1,3 +1,5 @@
+package level2;
+
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -26,7 +28,6 @@ public class Wall {
 		float box2dW = box2d.scalarPixelsToWorld(width / 2);
 		float box2dH = box2d.scalarPixelsToWorld(height / 2);
 		sd.setAsBox(box2dW, box2dH);
-
 		BodyDef bd = new BodyDef();
 		bd.type = BodyType.STATIC;
 		bd.position.set(box2d.coordPixelsToWorld(x, y));
@@ -35,8 +36,6 @@ public class Wall {
 		b.setUserData(this);
 	}
 
-	// Draw the boundary, if it were at an angle we'd have to do something
-	// fancier
 	void display(Processing g) {
 		g.fill(255);
 		g.stroke(0);

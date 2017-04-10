@@ -1,3 +1,5 @@
+package level3;
+
 public class Cell {
 	Wall[] b = new Wall[4];
 	int cellX;
