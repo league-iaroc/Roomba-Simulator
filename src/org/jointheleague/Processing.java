@@ -114,7 +114,7 @@ public class Processing extends PApplet {
 
 	public void beginContact(Contact cp) {
 		if (!(cp.getFixtureA().getBody() == zone.getBody()) && !(cp.getFixtureB().getBody() == (zone.getBody()))) {
-			// TODO brain.setBump(true);
+			roomba.setBump(true);
 			fill(0);
 			END = true;
 			START = false;
@@ -126,6 +126,6 @@ public class Processing extends PApplet {
 	}
 
 	public void endContact(Contact cp) {
-		// TODO brain.setBump(false);
+		roomba.setBump(false);
 	}
 }

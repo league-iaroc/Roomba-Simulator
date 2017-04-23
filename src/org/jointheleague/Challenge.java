@@ -68,4 +68,8 @@ public abstract class Challenge {
 	public void sleep(long ms) {
 		commands.add("sleep:" + System.currentTimeMillis() + "," + ms);
 	}
+
+	public boolean bumpersTriggered() {
+		return roomba.isBump();
+	}
 }

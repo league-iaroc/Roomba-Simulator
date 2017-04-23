@@ -17,6 +17,7 @@ public class Roomba implements Displayable {
 	private int tick = 0;
 	private int light = 50;
 	private int incRed = -4;
+	private boolean bump;
 	private Box2DProcessing box2d;
 
 	public Roomba(float x, float y, float radius, Box2DProcessing box2d) {
@@ -109,6 +110,14 @@ public class Roomba implements Displayable {
 		fd.friction = 0.5f;
 		fd.restitution = 0.1f;
 		body.createFixture(fd);
+	}
+
+	public boolean isBump() {
+		return bump;
+	}
+
+	public void setBump(boolean bump) {
+		this.bump = bump;
 	}
 
 }
