@@ -66,10 +66,11 @@ public class Processing extends PApplet {
 			textSize(40);
 			text("Click to start!", 200, 300);
 			if (mousePressed && END != true) {
+				Challenge.getCurrent().init();
 				START = true;
 			}
 		} else {
-			Challenge.getCurrent().loop(roomba);
+			Challenge.getCurrent().update();
 		}
 		zone.display(this);
 		drawMaze();

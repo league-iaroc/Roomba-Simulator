@@ -4,36 +4,38 @@ import java.util.ArrayList;
 
 import processing.core.PApplet;
 
-public class Challenge {
+public abstract class Challenge {
 	private static Challenge challenge;
 
 	public static Challenge getCurrent() {
 		return challenge;
 	}
 
-	public static void main(String[] args) {
+	public Challenge() {
+		challenge = this;
+
 		PApplet.main("org.jointheleague.Processing");
-		challenge = new Challenge();
 	}
 
 	private Roomba roomba;
 	private ArrayList<String> commands = new ArrayList<>();
 	private String lastIssuedCommand;
 
-	public void initialize(Roomba roomba) {
+	void initialize(Roomba roomba) {
 		this.roomba = roomba;
-
-		driveDirect(100, 100);
-		sleep(5000);
-		driveDirect(0, 0);
 	}
 
-	public void loop(Roomba roomba) {
+	void update() {
+		loop();
 		if (commands.size() > 0) {
 			String currentCommand = commands.get(0);
 			executeCommand(currentCommand, true);
 		}
 	}
+
+	public abstract void init();
+
+	public abstract void loop();
 
 	private void executeCommand(String command, boolean remove) {
 		String[] cmdSplit = command.split(":");
@@ -48,6 +50,7 @@ public class Challenge {
 		} else if (cmdName.equals("sleep")) {
 			if ((System.currentTimeMillis() - Long.parseLong(args[0]) >= Long.parseLong(args[1]))) {
 				lastIssuedCommand = command;
+
 				if (remove)
 					commands.remove(0);
 			} else {
@@ -58,11 +61,11 @@ public class Challenge {
 		}
 	}
 
-	private void driveDirect(float left, float right) {
+	public void driveDirect(float left, float right) {
 		commands.add("driveDirect:" + left + "," + right + "");
 	}
 
-	private void sleep(long ms) {
+	public void sleep(long ms) {
 		commands.add("sleep:" + System.currentTimeMillis() + "," + ms);
 	}
 }
