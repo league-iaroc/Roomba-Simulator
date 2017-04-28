@@ -6,22 +6,17 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
-import shiffman.box2d.Box2DProcessing;
-
 public class EndZone implements Displayable {
 	private int red = 100;
 	private int increment = 2;
-	int x;
-	int y;
-	int radius;
-	Body body;
-	Box2DProcessing box2d;
+	private int x, y, radius;
+	private Body body;
 
-	public EndZone(int x, int y, int r, Box2DProcessing box2d) {
+	public EndZone(int x, int y, int r) {
 		this.x = x;
 		this.y = y;
 		this.radius = r;
-		this.box2d = box2d;
+
 		makeBody(x, y, radius);
 		body.setUserData(this);
 		body.setAngularVelocity(17.2f);
@@ -40,11 +35,11 @@ public class EndZone implements Displayable {
 
 	private void makeBody(float x, float y, float r) {
 		BodyDef bd = new BodyDef();
-		bd.position = box2d.coordPixelsToWorld(x, y);
+		bd.position = Processing.WORLD.coordPixelsToWorld(x, y);
 		bd.type = BodyType.DYNAMIC;
-		body = box2d.createBody(bd);
+		body = Processing.WORLD.createBody(bd);
 		CircleShape cs = new CircleShape();
-		cs.m_radius = box2d.scalarPixelsToWorld(r);
+		cs.m_radius = Processing.WORLD.scalarPixelsToWorld(r);
 		FixtureDef fd = new FixtureDef();
 		fd.shape = cs;
 		fd.density = 0;

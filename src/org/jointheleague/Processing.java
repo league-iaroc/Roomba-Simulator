@@ -1,14 +1,24 @@
 package org.jointheleague;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.jbox2d.dynamics.contacts.Contact;
+import org.jnetwork.DataPackage;
 
 import processing.core.PApplet;
 import shiffman.box2d.Box2DProcessing;
 
 public class Processing extends PApplet {
-	// A reference to our box2d world
+	public static Box2DProcessing WORLD;
+
+	private static Processing processing;
+
+	public static Processing getProcessing() {
+		return processing;
+	}
+
 	public static int GRID_SIZE = 4;
 	public static boolean START = false;
 	public static final int SCREEN_SIZE = 900;
@@ -18,10 +28,8 @@ public class Processing extends PApplet {
 	public static boolean WIN = false;
 	private ArrayList<Path> verticalPaths = new ArrayList<Path>();
 	private ArrayList<Path> horizontalPaths = new ArrayList<Path>();
-	public Box2DProcessing box2d;
-	private ArrayList<Wall> walls;
-
-	private Roomba roomba;
+	private ArrayList<Wall> walls = new ArrayList<Wall>();
+	private ArrayList<Roomba> roombas = new ArrayList<>();
 	private EndZone zone;
 
 	public Processing() {
@@ -33,28 +41,45 @@ public class Processing extends PApplet {
 		horizontalPaths.add(new Path(1, 1));
 	}
 
+	public void addRoomba(Roomba roomba) {
+		roombas.add(roomba);
+	}
+
 	public void settings() {
 		size(SCREEN_SIZE, SCREEN_SIZE);
-		box2d = new Box2DProcessing(this);
 	}
 
 	public void setup() {
-		box2d.createWorld();
-		box2d.setGravity(0, 0);
-		box2d.listenForCollisions();
-		walls = new ArrayList<Wall>();
-		roomba = new Roomba(PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 6, box2d);
-		zone = new EndZone(SCREEN_SIZE - PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 4, box2d);
-		setMaze();
+		processing = this;
+		WORLD = new Box2DProcessing(this);
+		WORLD.createWorld();
+		WORLD.setGravity(0, 0);
+		WORLD.listenForCollisions();
+
+		Random random = new Random();
+		Roomba roomba = new Roomba(random.nextInt(500), random.nextInt(500), PIPE_LENGTH / 6);
+		roombas.add(roomba);
+		System.out.println("Registering roomba " + roomba.getID() + "...");
+		try {
+			Challenge.getCurrent().getNetClient().writeObject(new DataPackage(roomba).setMessage("register_roomba"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Registered roomba.");
+
+		zone = new EndZone(SCREEN_SIZE - PIPE_LENGTH / 2, PIPE_LENGTH / 2, PIPE_LENGTH / 4);
+		// setMaze();
 
 		Challenge.getCurrent().initialize(roomba);
 	}
 
 	public void draw() {
 		background(255);
-		
-		box2d.step();
-		roomba.display(this);
+
+		WORLD.step();
+		for (Roomba roomba : roombas) {
+			roomba.display(this);
+		}
 		if (END) {
 			textSize(40);
 			if (WIN) {
@@ -66,7 +91,7 @@ public class Processing extends PApplet {
 			textSize(40);
 			text("Click to start!", 200, 300);
 			if (mousePressed && END != true) {
-				Challenge.getCurrent().init();
+				Challenge.getCurrent().start();
 				START = true;
 			}
 		} else {
@@ -74,7 +99,6 @@ public class Processing extends PApplet {
 		}
 		zone.display(this);
 		drawMaze();
-
 	}
 
 	void setMaze() {
@@ -89,7 +113,7 @@ public class Processing extends PApplet {
 					}
 				}
 				if (setVert) {
-					walls.add(new Wall(PIPE_LENGTH * i + offset, PIPE_LENGTH * j, PIPE_LENGTH, PIPE_WIDTH, box2d));
+					walls.add(new Wall(PIPE_LENGTH * i + offset, PIPE_LENGTH * j, PIPE_LENGTH, PIPE_WIDTH));
 				}
 
 				for (Path p : horizontalPaths) {
@@ -98,8 +122,7 @@ public class Processing extends PApplet {
 					}
 				}
 				if (setHorz) {
-					walls.add(new Wall(PIPE_LENGTH * i, PIPE_LENGTH * j + offset, PIPE_WIDTH, PIPE_LENGTH, box2d));
-					// cells.add(Cell(offset*(i+1), offset*(j+1)));
+					walls.add(new Wall(PIPE_LENGTH * i, PIPE_LENGTH * j + offset, PIPE_WIDTH, PIPE_LENGTH));
 				}
 			}
 		}
@@ -107,18 +130,22 @@ public class Processing extends PApplet {
 
 	void drawMaze() {
 		for (int i = walls.size() - 1; i >= 0; i--) {
-			Wall p = walls.get(i);
-			p.display(this);
+			walls.get(i).display(this);
 		}
 	}
 
 	public void beginContact(Contact cp) {
-		if (!(cp.getFixtureA().getBody() == zone.getBody()) && !(cp.getFixtureB().getBody() == (zone.getBody()))) {
-			roomba.setBump(true);
-			fill(0);
-			END = true;
-			START = false;
-			roomba.killBody();
+		if (!(cp.getFixtureA().getBody() == zone.getBody()) && !(cp.getFixtureB().getBody() == zone.getBody())) {
+			for (Roomba roomba : roombas) {
+				if ((cp.getFixtureA().getBody() == roomba.getBody())
+						|| (cp.getFixtureB().getBody() == roomba.getBody())) {
+					roomba.setBump(true);
+					fill(0);
+					END = true;
+					START = false;
+					roomba.killBody();
+				}
+			}
 		} else {
 			END = true;
 			WIN = true;
@@ -126,6 +153,10 @@ public class Processing extends PApplet {
 	}
 
 	public void endContact(Contact cp) {
-		roomba.setBump(false);
+		for (Roomba roomba : roombas) {
+			if ((cp.getFixtureA().getBody() == roomba.getBody()) || (cp.getFixtureB().getBody() == roomba.getBody())) {
+				roomba.setBump(false);
+			}
+		}
 	}
 }

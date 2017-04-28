@@ -2,6 +2,9 @@ package org.jointheleague;
 
 import static processing.core.PConstants.PI;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -9,27 +12,28 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
-import shiffman.box2d.Box2DProcessing;
-
-public class Roomba implements Displayable {
-	private Body body;
-	private float radius;
+public class Roomba implements Displayable, Serializable {
+	private static final long serialVersionUID = -3922395008408630269L;
+	private String id;
 	private int tick = 0;
 	private int light = 50;
 	private int incRed = -4;
+	private float x, y;
+	private float radius;
 	private boolean bump;
-	private Box2DProcessing box2d;
+	private transient Body body;
 
-	public Roomba(float x, float y, float radius, Box2DProcessing box2d) {
+	public Roomba(float x, float y, float radius) {
 		this.radius = radius;
-		this.box2d = box2d;
-		makeBody(x, y, radius);
-		body.setUserData(this);
-		body.setAngularVelocity(17.2f);
+		this.x = x;
+		this.y = y;
+		this.id = UUID.randomUUID().toString();
+
+		makeBody();
 	}
 
 	public void killBody() {
-		box2d.destroyBody(body);
+		Processing.WORLD.destroyBody(body);
 	}
 
 	public void driveDirect(float left, float right) {
@@ -64,7 +68,7 @@ public class Roomba implements Displayable {
 			tick = 0;
 		}
 
-		Vec2 pos = g.box2d.getBodyPixelCoord(body);
+		Vec2 pos = Processing.WORLD.getBodyPixelCoord(body);
 		float a = body.getAngle();
 		g.pushMatrix();
 		g.translate(pos.x, pos.y);
@@ -97,19 +101,24 @@ public class Roomba implements Displayable {
 		g.popMatrix();
 	}
 
-	public void makeBody(float x, float y, float r) {
+	public void makeBody() {
 		BodyDef bd = new BodyDef();
-		bd.position = box2d.coordPixelsToWorld(x, y);
+		bd.position = Processing.WORLD.coordPixelsToWorld(x, y);
 		bd.type = BodyType.DYNAMIC;
-		body = box2d.createBody(bd);
+		body = Processing.WORLD.createBody(bd);
+
 		CircleShape cs = new CircleShape();
-		cs.m_radius = box2d.scalarPixelsToWorld(r);
+		cs.m_radius = Processing.WORLD.scalarPixelsToWorld(radius);
+
 		FixtureDef fd = new FixtureDef();
 		fd.shape = cs;
 		fd.density = 0;
 		fd.friction = 0.5f;
 		fd.restitution = 0.1f;
+
 		body.createFixture(fd);
+		body.setUserData(this);
+		body.setAngularVelocity(17.2f);
 	}
 
 	public boolean isBump() {
@@ -120,4 +129,11 @@ public class Roomba implements Displayable {
 		this.bump = bump;
 	}
 
+	public String getID() {
+		return id;
+	}
+
+	public Body getBody() {
+		return body;
+	}
 }

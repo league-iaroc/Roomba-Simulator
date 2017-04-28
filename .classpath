@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="C:/Users/Lucas/workspace/Roomba-Simulator/libs/box2d_processing.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Lucas/workspace/Roomba-Simulator/libs/jbox2d-library-2.2.1-ds.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Lucas/workspace/Roomba-Simulator/libs/processing_core.jar"/>
+	<classpathentry kind="lib" path="libs/jnetwork-core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
