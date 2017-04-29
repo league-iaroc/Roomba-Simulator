@@ -1,16 +1,18 @@
 package org.jointheleague;
 
+import java.awt.geom.Ellipse2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jnetwork.DataPackage;
 
 import processing.core.PApplet;
 import shiffman.box2d.Box2DProcessing;
 
-class Processing extends PApplet {
+public class Processing extends PApplet {
 	public static Box2DProcessing WORLD;
 
 	private static Processing processing;
@@ -41,7 +43,19 @@ class Processing extends PApplet {
 		horizontalPaths.add(new Path(1, 1));
 	}
 
-	public void addRoomba(Roomba roomba) {
+	Roomba getRoombaAtPosition(int x, int y) {
+		for (Roomba roomba : roombas) {
+			Vec2 pos = WORLD.getBodyPixelCoord(roomba.getBody());
+			Ellipse2D circle = new Ellipse2D.Float(pos.x - roomba.getRadius(), pos.y - roomba.getRadius(),
+					roomba.getRadius() * 2, roomba.getRadius() * 2);
+			if (circle.contains(x, y)) {
+				return roomba;
+			}
+		}
+		return null;
+	}
+
+	void addRoomba(Roomba roomba) {
 		roombas.add(roomba);
 	}
 

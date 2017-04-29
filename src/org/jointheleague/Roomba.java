@@ -18,8 +18,7 @@ class Roomba implements Displayable, Serializable {
 	private int tick = 0;
 	private int light = 50;
 	private int incRed = -4;
-	private float x, y;
-	private float radius;
+	private float x, y, radius;
 	private boolean bump;
 	private transient Body body;
 
@@ -30,6 +29,10 @@ class Roomba implements Displayable, Serializable {
 		this.id = UUID.randomUUID().toString();
 
 		makeBody();
+	}
+	
+	public float getRadius() {
+		return radius;
 	}
 
 	public void killBody() {

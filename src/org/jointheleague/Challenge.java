@@ -48,23 +48,7 @@ public abstract class Challenge {
 					Thread.sleep(1000);
 					while (!netClient.isClosed()) {
 						DataPackage in = (DataPackage) netClient.readObject();
-						System.out.println("Received package: " + in.getMessage());
-						if (in.getMessage().equals("register_roomba")) {
-							Roomba roomba = (Roomba) in.getObjects()[0];
-							roomba.makeBody();
-
-							Processing.getProcessing().addRoomba(roomba);
-							registerRoomba(roomba);
-							System.out.println("Registered roomba " + roomba.getID());
-						} else if (in.getMessage().equals("roomba_cmd")) {
-							commandsMap.get((String) in.getObjects()[0]).add((String) in.getObjects()[1]);
-						} else if (in.getMessage().equals("game_start")) {
-							Processing.START = true;
-							init();
-							System.out.println("Started game from remote request.");
-						} else {
-							System.err.println("No handle for package: " + in.getMessage());
-						}
+						handlePacket(in);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -90,6 +74,26 @@ public abstract class Challenge {
 	void initialize(Roomba roomba) {
 		thisId = roomba.getID();
 		registerRoomba(roomba);
+	}
+
+	void handlePacket(DataPackage in) {
+		System.out.println("Received package: " + in.getMessage());
+		if (in.getMessage().equals("register_roomba")) {
+			Roomba roomba = (Roomba) in.getObjects()[0];
+			roomba.makeBody();
+
+			Processing.getProcessing().addRoomba(roomba);
+			registerRoomba(roomba);
+			System.out.println("Registered roomba " + roomba.getID());
+		} else if (in.getMessage().equals("roomba_cmd")) {
+			commandsMap.get((String) in.getObjects()[0]).add((String) in.getObjects()[1]);
+		} else if (in.getMessage().equals("game_start")) {
+			Processing.START = true;
+			init();
+			System.out.println("Started game from remote request.");
+		} else {
+			System.err.println("No handle for package: " + in.getMessage());
+		}
 	}
 
 	private void registerRoomba(Roomba roomba) {
