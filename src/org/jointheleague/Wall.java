@@ -5,7 +5,7 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 
-public class Wall implements Displayable {
+class Wall implements Displayable {
 	private float x, y, width, height;
 	private Body b;
 

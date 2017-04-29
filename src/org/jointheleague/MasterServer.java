@@ -1,4 +1,4 @@
-package org.jointheleague.net;
+package org.jointheleague;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -10,9 +10,8 @@ import org.jnetwork.DataPackage;
 import org.jnetwork.TCPConnection;
 import org.jnetwork.TCPConnectionCallback;
 import org.jnetwork.TCPServer;
-import org.jointheleague.Roomba;
 
-public class MasterServer implements TCPConnectionCallback {
+class MasterServer implements TCPConnectionCallback {
 	private static TCPServer server;
 
 	public static void main(String[] args) {

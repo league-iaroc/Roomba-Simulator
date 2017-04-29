@@ -1,6 +1,6 @@
 package org.jointheleague;
 
-public class Path {
+class Path {
 	private int row;
 	private int col;
 

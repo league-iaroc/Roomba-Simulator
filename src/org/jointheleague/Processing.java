@@ -10,7 +10,7 @@ import org.jnetwork.DataPackage;
 import processing.core.PApplet;
 import shiffman.box2d.Box2DProcessing;
 
-public class Processing extends PApplet {
+class Processing extends PApplet {
 	public static Box2DProcessing WORLD;
 
 	private static Processing processing;

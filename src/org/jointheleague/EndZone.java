@@ -6,7 +6,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
-public class EndZone implements Displayable {
+class EndZone implements Displayable {
 	private int red = 100;
 	private int increment = 2;
 	private int x, y, radius;

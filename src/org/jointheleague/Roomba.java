@@ -12,7 +12,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
-public class Roomba implements Displayable, Serializable {
+class Roomba implements Displayable, Serializable {
 	private static final long serialVersionUID = -3922395008408630269L;
 	private String id;
 	private int tick = 0;

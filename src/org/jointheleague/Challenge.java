@@ -1,7 +1,10 @@
 package org.jointheleague;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -13,17 +16,27 @@ import processing.core.PApplet;
 public abstract class Challenge {
 	private static Challenge challenge;
 
-	public static Challenge getCurrent() {
+	static Challenge getCurrent() {
 		return challenge;
 	}
 
 	public Challenge() {
 		challenge = this;
+		password = new BigInteger(128, new SecureRandom()).toString(36);
 
 		try {
 			netClient = new TCPConnection("localhost", 1337);
+			System.out.println("Connected to remote server.");
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			Thread thread = new Thread(() -> MasterServer.main(new String[0]));
+			thread.start();
+			try {
+				thread.join(1000);
+				netClient = new TCPConnection("localhost", 1337);
+				System.out.println("Started and connected to local server.");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		PApplet.main("org.jointheleague.Processing");
@@ -67,8 +80,10 @@ public abstract class Challenge {
 	private HashMap<String, ArrayList<String>> commandsMap = new HashMap<>();
 	private HashMap<String, String> lastIssuedCommands = new HashMap<>();
 	private TCPConnection netClient;
+	private String password;
+	private boolean isRooted;
 
-	public TCPConnection getNetClient() {
+	TCPConnection getNetClient() {
 		return netClient;
 	}
 
@@ -145,9 +160,13 @@ public abstract class Challenge {
 		commandsMap.get(thisId).add(netCommand("sleep:" + System.currentTimeMillis() + "," + ms));
 	}
 
-	private String netCommand(String cmd) {
+	String netCommand(String cmd) {
+		return this.netCommand(thisId, cmd);
+	}
+
+	String netCommand(String id, String cmd) {
 		try {
-			netClient.writeObject(new DataPackage(thisId, cmd).setMessage("roomba_cmd"));
+			netClient.writeObject(new DataPackage(id, cmd).setMessage("roomba_cmd"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -157,5 +176,20 @@ public abstract class Challenge {
 
 	public boolean bumpersTriggered() {
 		return roombas.get(thisId).isBump();
+	}
+
+	public String getBase64EncodedPassword() {
+		return new String(Base64.getEncoder().encode(password.getBytes()));
+	}
+
+	public Root root(String password) {
+		if (password.equals(this.password)) {
+			isRooted = true;
+			System.out.println("Access granted.");
+			return new Root();
+		} else {
+			System.out.println("Access denied.");
+		}
+		return null;
 	}
 }
